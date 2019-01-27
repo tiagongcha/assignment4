@@ -1,0 +1,38 @@
+language:cpp
+compiler:
+  - gcc
+  - clang
+script:
+  - make
+  - make test
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
