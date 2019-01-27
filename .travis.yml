@@ -1,7 +1,7 @@
 os: osx
 language: cpp
 compiler: clang++
-script: echo here
+script: make
  
 
 
