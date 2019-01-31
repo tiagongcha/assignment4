@@ -36,7 +36,7 @@ double getLength(std::pair<int, int> point1, std::pair<int, int> point2){
 /**Check whether two lines are vertical**/
 bool isVertical(double slope1, double slope2){
     if(isinf(slope1) || isinf(slope2)){
-        return (isinf(slope2) && areSame(slope1, 0.0);
+        return isinf(slope2) && areSame(slope1, 0.0);
     }else{
         return areSame(slope1 * slope2, -1);
     }
