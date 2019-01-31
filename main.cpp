@@ -1,6 +1,6 @@
 //
 //  main.cpp
-//  assignment3
+//  assignment4
 //
 //  Created by Gong Tia on 1/17/19.
 //  Copyright © 2019 Gong Tia. All rights reserved.
@@ -36,11 +36,7 @@ double getLength(std::pair<int, int> point1, std::pair<int, int> point2){
 /**Check whether two lines are vertical**/
 bool isVertical(double slope1, double slope2){
     if(isinf(slope1) || isinf(slope2)){
-        if(isinf(slope1) && isinf(slope2)){
-            return false;
-        }else{
-            return (isinf(slope1) && areSame(slope2, 0.0)) || (isinf(slope2) && areSame(slope1, 0.0));
-        }
+        return (isinf(slope2) && areSame(slope1, 0.0);
     }else{
         return areSame(slope1 * slope2, -1);
     }
@@ -94,9 +90,9 @@ std::vector<double> shapeSlopes(std::vector<std::pair<int, int> > &shape){
 std::vector<double> shapeLengths(std::vector<std::pair<int, int> > &shape){
     std::vector<double> lengths;
     lengths.push_back(getLength(shape[1], shape[0]));
-     lengths.push_back(getLength(shape[2], shape[1]));
-     lengths.push_back(getLength(shape[3], shape[2]));
-     lengths.push_back(getLength(shape[0], shape[3]));
+    lengths.push_back(getLength(shape[2], shape[1]));
+    lengths.push_back(getLength(shape[3], shape[2]));
+    lengths.push_back(getLength(shape[0], shape[3]));
     return lengths;
 }
 
@@ -137,6 +133,74 @@ void classifyShape(std::vector<std::pair<int, int> >& shape, std::ofstream& outf
     }
 }
 
+std::vector<std::string> stringToArr(std::string& line){
+    std::vector<std::string> ret;
+    std::string value;
+    char delimiter = ' ';
+    std::istringstream stream(line);
+    
+    while (getline(stream, value, delimiter)) {
+        ret.push_back(value);
+    }
+    return ret;
+}
+
+bool isError1(std::vector<std::string> strArr){
+    if(strArr.size() != 6){
+        return true;
+    }
+    
+    for(std::string s: strArr){
+        for(char c: s){
+            if(!isdigit(c)){return true;}
+        }
+        
+        int num = stoi(s);
+        if(num > 100 || num < 0){
+            return true;
+        }
+    }
+    return false;
+}
+
+
+bool isSame(std::pair<int, int> lhs, std::pair<int, int> rhs){
+    return (lhs.first == rhs.first && lhs.second == rhs.second);
+}
+
+bool isError2(std::vector<std::pair<int, int> > shape){
+    sort(shape.begin(), shape.end());
+    
+    for(int i = 0; i < shape.size() - 1; i ++){
+        if(isSame(shape[i], shape[i+1])){
+            return true;
+        }
+    }
+    return false;
+}
+//cited from : https://stackoverflow.com/questions/14176776/find-out-if-2-lines-intersect
+bool isIntersect(std::pair<int, int> p1, std::pair<int, int> p2, std::pair<int, int> q1, std::pair<int, int>q2){
+    return (((q1.first-p1.first)*(p2.second-p1.second) - (q1.second-p1.second)*(p2.first-p1.first))
+            * ((q2.first-p1.first)*(p2.second-p1.second) - (q2.second-p1.second)*(p2.first-p1.first)) < 0)
+    &&
+    (((p1.first-q1.first)*(q2.second-q1.second) - (p1.second-q1.second)*(q2.first-q1.first))
+     * ((p2.first-q1.first)*(q2.second-q1.second) - (p2.second-q1.second)*(q2.first-q1.first)) < 0);
+}
+
+bool isError3(std::vector<std::pair<int, int> >& shape){
+    return isIntersect(shape[0], shape[1], shape[2], shape[3]);
+}
+
+//cite from: https://stackoverflow.com/questions/3813681/checking-to-see-if-3-points-are-on-the-same-line
+//[ Ax * (By - Cy) + Bx * (Cy - Ay) + Cx * (Ay - By) ] / 2
+bool isError4(std::vector<std::pair<int, int> >& shape){
+    bool situation1 = (shape[0].first * (shape[1].second - shape[2].second) + shape[1].first * (shape[2].second - shape[0].second)
+                       + shape[2].first * (shape[0].second - shape[1].second)) == 0;
+    bool situation2 = (shape[1].first * (shape[2].second - shape[3].second) + shape[2].first * (shape[3].second - shape[1].second)
+                       + shape[3].first * (shape[1].second - shape[2].second)) == 0;
+    return situation1 || situation2;
+}
+
 void mainClassifier(std::string inFileName, std::string outFileName){
     std::ifstream infile;
     std::ofstream outfile;
@@ -145,16 +209,31 @@ void mainClassifier(std::string inFileName, std::string outFileName){
     
     std::string line;
     while(std::getline(infile, line)){
-        std::stringstream ss(line);
-        std::vector<std::pair<int, int> > shape;
-        shape.push_back(std::make_pair(0,0));
         
-        int x,y;
-        while(ss >> x >> y){
-            std::pair<int, int> vertice = std::make_pair(x,y);
-            shape.push_back(vertice);
+        std::stringstream ss(line);
+        if(isError1(stringToArr(line))){
+            outfile << "error1" << std::endl;
+            
+        }else{
+            std::vector<std::pair<int, int> > shape;
+            shape.push_back(std::make_pair(0,0));
+            int x,y;
+            while(ss >> x >> y){
+                std::pair<int, int> vertice = std::make_pair(x,y);
+                shape.push_back(vertice);
+            }
+            
+            if(isError2(shape)){
+                outfile << "error2" << std::endl;
+            }else if (isError3(shape)){
+                outfile << "error3" << std::endl;
+                
+            }else if(isError4(shape)){
+                outfile << "error4" << std::endl;
+            }else{
+                classifyShape(shape, outfile);
+            }
         }
-        classifyShape(shape, outfile);
     }
     infile.close();
     outfile.close();
@@ -162,7 +241,9 @@ void mainClassifier(std::string inFileName, std::string outFileName){
 
 
 int main(int argc, const char * argv[]) {
-   mainClassifier("shapes.txt", "shapesout.txt");
-    return 0;
+    mainClassifier("shapes.txt", "shapesout.txt");
+    
+    //    TODO: Now error doesnt terminate program, remember to terminate!!!!!!!!!!
 }
+
 
