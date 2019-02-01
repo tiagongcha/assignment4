@@ -13,7 +13,7 @@
 #include <cmath>
 #include <limits>
 
-/**Check double values whether equal or not **/
+/**helper method for checking double values whether equal or not **/
 bool areSame(double a, double b){
     return std::fabs(a + - b) < std::numeric_limits<double>::epsilon();
 }
@@ -105,7 +105,7 @@ std::vector<double> shapeDiagonal(std::vector<std::pair<int, int> > &shape){
 }
 
 /**This method takes in the coordinates of a shape's four points, classifying their specific shape, and write to the output file**/
-void classifyShape(std::vector<std::pair<int, int> >& shape, std::ofstream& outfile){
+void classifyShape(std::vector<std::pair<int, int> >& shape){
     //getting the math attributes of this shape:
     std::vector<double> slopes = shapeSlopes(shape);
     std::vector<double> lengths = shapeLengths(shape);
@@ -114,25 +114,26 @@ void classifyShape(std::vector<std::pair<int, int> >& shape, std::ofstream& outf
     //pass shape's geometric attributes to different shapes' boolean function:
     if(isParallelogram(slopes[0], slopes[1], slopes[2], slopes[3])){
         if (isRhombi(diagonals[0], diagonals[1]) && isRectangle(slopes[0], slopes[1])) {
-            outfile << "square" << std::endl;
+            std::cout << "square" << std::endl;
         }else if (isRhombi(diagonals[0], diagonals[1])){
-            outfile << "rhombus" << std::endl;
+            std::cout << "rhombus" << std::endl;
         }else if (isRectangle(slopes[0], slopes[1])){
-            outfile << "rectangle" << std::endl;
+            std::cout << "rectangle" << std::endl;
         }else{
-            outfile << "parallelogram" << std::endl;
+            std::cout << "parallelogram" << std::endl;
         }
     }else{
         if(isTrapezoid(slopes[0], slopes[1], slopes[2], slopes[3])){
-            outfile << "trapezoid" << std::endl;
+            std::cout << "trapezoid" << std::endl;
         }else if(isKite(lengths[0], lengths[1], lengths[2], lengths[3])){
-            outfile << "kite" << std::endl;
+            std::cout << "kite" << std::endl;
         }else{
-            outfile << "quadrilateral" << std::endl;
+            std::cout << "quadrilateral" << std::endl;
         }
     }
 }
 
+/**helper method for parsing read-in string**/
 std::vector<std::string> stringToArr(std::string& line){
     std::vector<std::string> ret;
     std::string value;
@@ -146,15 +147,16 @@ std::vector<std::string> stringToArr(std::string& line){
 }
 
 bool isError1(std::vector<std::string> strArr){
+    //    error1: input number of element not 6
     if(strArr.size() != 6){
         return true;
     }
-    
+    //    error1: input contains invalid char
     for(std::string s: strArr){
         for(char c: s){
             if(!isdigit(c)){return true;}
         }
-        
+        //        error1: number value out of range
         int num = stoi(s);
         if(num > 100 || num < 0){
             return true;
@@ -163,8 +165,8 @@ bool isError1(std::vector<std::string> strArr){
     return false;
 }
 
-
-bool isSame(std::pair<int, int> lhs, std::pair<int, int> rhs){
+/**helper method for checking whether two points coincide**/
+bool isSame(std::pair<int, int>& lhs, std::pair<int, int>& rhs){
     return (lhs.first == rhs.first && lhs.second == rhs.second);
 }
 
@@ -178,17 +180,18 @@ bool isError2(std::vector<std::pair<int, int> > shape){
     }
     return false;
 }
+
 //cited from : https://stackoverflow.com/questions/14176776/find-out-if-2-lines-intersect
-bool isIntersect(std::pair<int, int> p1, std::pair<int, int> p2, std::pair<int, int> q1, std::pair<int, int>q2){
-    return (((q1.first-p1.first)*(p2.second-p1.second) - (q1.second-p1.second)*(p2.first-p1.first))
-            * ((q2.first-p1.first)*(p2.second-p1.second) - (q2.second-p1.second)*(p2.first-p1.first)) < 0)
+bool isIntersect(std::pair<int, int>& p1, std::pair<int, int>& p2, std::pair<int, int>& q1, std::pair<int, int>& q2){
+    return (((q1.first-p1.first) * (p2.second-p1.second) - (q1.second-p1.second)*(p2.first-p1.first))
+            * ((q2.first-p1.first) * (p2.second-p1.second) - (q2.second-p1.second)*(p2.first-p1.first)) < 0)
     &&
     (((p1.first-q1.first)*(q2.second-q1.second) - (p1.second-q1.second)*(q2.first-q1.first))
      * ((p2.first-q1.first)*(q2.second-q1.second) - (p2.second-q1.second)*(q2.first-q1.first)) < 0);
 }
 
 bool isError3(std::vector<std::pair<int, int> >& shape){
-    return isIntersect(shape[0], shape[1], shape[2], shape[3]);
+    return isIntersect(shape[0], shape[1], shape[2], shape[3]) || isIntersect(shape[0], shape[3], shape[2], shape[1]);
 }
 
 //cite from: https://stackoverflow.com/questions/3813681/checking-to-see-if-3-points-are-on-the-same-line
@@ -201,19 +204,14 @@ bool isError4(std::vector<std::pair<int, int> >& shape){
     return situation1 || situation2;
 }
 
-void mainClassifier(std::string inFileName, std::string outFileName){
-    std::ifstream infile;
-    std::ofstream outfile;
-    infile.open(inFileName);
-    outfile.open(outFileName);
-    
+void mainClassifier(){
     std::string line;
-    while(std::getline(infile, line)){
-        
+    while(std::getline(std::cin, line)){
         std::stringstream ss(line);
+        
         if(isError1(stringToArr(line))){
-            outfile << "error1" << std::endl;
-            
+            std::cout << "error1" << std::endl;
+            exit(0);
         }else{
             std::vector<std::pair<int, int> > shape;
             shape.push_back(std::make_pair(0,0));
@@ -222,28 +220,25 @@ void mainClassifier(std::string inFileName, std::string outFileName){
                 std::pair<int, int> vertice = std::make_pair(x,y);
                 shape.push_back(vertice);
             }
-            
             if(isError2(shape)){
-                outfile << "error2" << std::endl;
+                std::cout << "error2" << std::endl;
+                exit(0);
             }else if (isError3(shape)){
-                outfile << "error3" << std::endl;
-                
+                std::cout << "error3" << std::endl;
+                exit(0);
             }else if(isError4(shape)){
-                outfile << "error4" << std::endl;
+                std::cout << "error4" << std::endl;
+                exit(0);
             }else{
-                classifyShape(shape, outfile);
+                classifyShape(shape);
             }
         }
     }
-    infile.close();
-    outfile.close();
 }
 
 
 int main(int argc, const char * argv[]) {
-    mainClassifier("shapes.txt", "shapesout.txt");
-    
-    //    TODO: Now error doesnt terminate program, remember to terminate!!!!!!!!!!
+    mainClassifier();
 }
 
 
