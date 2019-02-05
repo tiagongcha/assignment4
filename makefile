@@ -1,2 +1,2 @@
-fuzz: 
+fuzzer: 
 	
