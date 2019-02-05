@@ -24,7 +24,7 @@ def error1(quadFile, output):
 	for x in range(random.randint(0, 10)):
 		charToWrite = random.choice([notSix, outOfRange, invalidChar])();
 		quadFile.write(charToWrite + " ")
-		output.write("error1")
+		output.write("error1\n")
 
 def generatePair():
 	return str(random.randint(0,100)), str(random.randint(0,100))
@@ -41,7 +41,7 @@ def threeSame():
 # Generate error2:
 def error2(quadFile, output):
 	quadFile.write(random.choice([twoSame, threeSame])())
-	output.write("error2")
+	output.write("error2\n")
 
 #Generate error3:
 def error3(quadFile, output):
@@ -52,7 +52,7 @@ def error3(quadFile, output):
 	qx = random.randint(0,x)
 	qy = random.randint(0,y)
 	quadFile.write (str(x) + " " + str(y)+ " " + str(px) + " " + str(py) + " " + str(qx) + " " + str(qy))
-	output.write("error3")
+	output.write("error3\n")
 
 #Generate error4:
 def error4(quadFile, output):
@@ -79,7 +79,7 @@ def error4(quadFile, output):
 		# ry = a*rx + b
 		# quadFile.write(str(px) + " " + str(py)+ " " + str(qx) + " " + str(qy) + " " + str(rx) + " " + str(ry))
 		quadFile.write("10 0 5 5 0 10")
-	output.write("error4")
+	output.write("error4\n")
 	random.choice([situation1, situation2])(quadFile)
 
 def generateRectangle(quadFile, output):
@@ -87,12 +87,12 @@ def generateRectangle(quadFile, output):
 	allPoints = list(b.exterior.coords)
 	for x in range(3):
 		quadFile.write(str(int(allPoints[x][0])) + " " + str(int(allPoints[x][1])) + " ")
-	output.write("rectangle")
+	output.write("rectangle\n")
 
 def generateSquare(quadFile, output):
 	x = random.randint(0,100)
 	quadFile.write(str(x) + " " + str(0)+ " " + str(x) + " " + str(x) + " " + str(0) + " " + str(x))
-	output.write("square")
+	output.write("square\n")
 
 def generateRhombus(quadFile, output):
 	# sitation1 is one point at x-axis:-> original point(5,0) (8,4) (3,4)
@@ -103,7 +103,7 @@ def generateRhombus(quadFile, output):
 	def situation2(quadFile):
 		time = random.randint(0,25)
 		quadFile.write(str(3 * time) + " " + str(1 * time)+ " " + str(4 * time) + " " + str(4 * time) + " " + str(1 * time) + " " + str(3 * time))
-	output.write("rhombus")
+	output.write("rhombus\n")
 	random.choice([situation1, situation2])(quadFile)
 
 def generateParallelogram(quadFile, output):
@@ -115,7 +115,7 @@ def generateParallelogram(quadFile, output):
 	def situation2(quadFile):
 		time = random.randint(0,20)
 		quadFile.write(str(3 * time) + " " + str(1 * time)+ " " + str(3 * time) + " " + str(5 * time) + " " + str(0 * time) + " " + str(4 * time))
-	output.write("parallelogram")
+	output.write("parallelogram\n")
 	random.choice([situation1, situation2])(quadFile)
 
 def generateKite(quadFile, output):
@@ -127,7 +127,7 @@ def generateKite(quadFile, output):
 	def situation2(quadFile):
 		time = random.randint(0,20)
 		quadFile.write(str(3 * time) + " " + str(0 * time)+ " " + str(4 * time) + " " + str(4 * time) + " " + str(0 * time) + " " + str(3 * time))
-	output.write("kite")
+	output.write("kite\n")
 	random.choice([situation1, situation2])(quadFile)
 
 def generateQuad(quadFile,output):
@@ -139,13 +139,13 @@ def generateQuad(quadFile,output):
 	def situation2(quadFile):
 		time = random.randint(0,20)
 		quadFile.write(str(4 * time) + " " + str(4 * time)+ " " + str(8 * time) + " " + str(5 * time) + " " + str(2 * time) + " " + str(6 * time))
-	output.write("quadrilateral")
+	output.write("quadrilateral\n")
 	random.choice([situation1, situation2])(quadFile)
 
 def generateTrapezoid(quadFile, output):
 	# 14 0 10 10 4 10 
 	time = random.randint(0,7)
-	output.write("trapezoid")
+	output.write("trapezoid\n")
 	quadFile.write(str(14 * time) + " " + str(0 * time)+ " " + str(10 * time) + " " + str(10 * time) + " " + str(4 * time) + " " + str(10 * time))
 
 
