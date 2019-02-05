@@ -1,4 +1,4 @@
-//
+ //
 //  main.cpp
 //  assignment4
 //
@@ -201,7 +201,10 @@ bool isError4(std::vector<std::pair<int, int> >& shape){
                        + shape[2].first * (shape[0].second - shape[1].second)) == 0;
     bool situation2 = (shape[1].first * (shape[2].second - shape[3].second) + shape[2].first * (shape[3].second - shape[1].second)
                        + shape[3].first * (shape[1].second - shape[2].second)) == 0;
-    return situation1 || situation2;
+    
+    bool situation3 = (shape[0].first * (shape[1].second - shape[3].second) + shape[1].first * (shape[3].second - shape[0].second)
+                       + shape[3].first * (shape[0].second - shape[1].second)) == 0;
+    return situation1 || situation2 || situation3;
 }
 
 void mainClassifier(){
