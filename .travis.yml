@@ -1,7 +1,7 @@
 os: osx
 language: cpp
 compiler: clang++
-script: make
+script: python3 profile.py
  
 
 
